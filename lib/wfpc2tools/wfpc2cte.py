@@ -131,7 +131,7 @@ def update_CTE_keywords(hdr, cte,quiet=False,update=True):
     # Start by checking to see if the keywords to be updated already exist
     # If not, print a warning and insure quiet=False so the results get
     # reported to STDOUT at the very least.
-    if not hdr.has_key('CTE_1E2'):
+    if 'CTE_1E2' not in hdr:
         print "WARNING: CTE keywords not found in %s,%d header."%(hdr['extname'],hdr['extver'])
         print "         Adding the keywords exclusively to "
         print "         the FITS file's extension header."
