@@ -172,15 +172,20 @@ or ::
 #          09/25/08 - added check for __name__
 #          03/12/10 - added support for geis, waiver fits, and multi-extension fits input
 
-from __future__ import division # confidence medium
+from __future__ import absolute_import, division, print_function # confidence medium
+
+import sys, string
 import pyfits
 import numpy as N
-from stsci.convolve import boxcar
-import stsci.tools
 from optparse import OptionParser
-import stsci.ndimage as ndimage
+
+import stsci.tools
 from stsci.tools import fileutil
-import wfpc2util, opusutil, sys, string
+from stsci.convolve import boxcar
+import stsci.ndimage as ndimage
+
+from . import wfpc2util
+from . import opusutil
 
 __version__ = "2.2 (2010 March 12)"
 
@@ -275,14 +280,14 @@ class Wfpc2destreak:
         if ( input_mask != None ):
            fh_mask = pyfits.open(input_mask)
            masked_image = fh_mask[0].data
-           if (verbosity >=1 ): print 'Using masked image from input mask file:', input_mask
+           if (verbosity >=1 ): print('Using masked image from input mask file:', input_mask)
         else:
            im_mask = cr_reject(image_data, niter)
            im_mask_2d = N.resize( im_mask, [image_data.shape[0], image_data.shape[1]])
            masked_image = image_data * (1-im_mask_2d)  # gives 0 where there are Cosmic Rays in image section
            self.input_mask = "None"  # for writing to header
 
-        if (verbosity >=1 ):  print 'Masked image has min, mean, max = ', masked_image.min(),',', masked_image.mean(),',', masked_image.max()
+        if (verbosity >=1 ):  print('Masked image has min, mean, max = ', masked_image.min(),',', masked_image.mean(),',', masked_image.max())
 
 
     # calculate stats for all pixels in c0 image region
@@ -293,7 +298,7 @@ class Wfpc2destreak:
         self.dorgpix = image_data.shape[0]*image_data.shape[1]
 
     # calc stats for unmasked pixels in c0 image region
-        IR_nz = N.where( masked_image <> 0)
+        IR_nz = N.where( masked_image != 0)
         self.dmskmean = masked_image[IR_nz].mean()
         self.dmskstd = masked_image[IR_nz].std()
         self.dmskmin = masked_image[IR_nz].min()
@@ -314,7 +319,7 @@ class Wfpc2destreak:
         if (bias_thresh < im_mean): # so apply no correction
              alg_type = "Skipped"
              alg_cmt = "No correction applied"
-             if (verbosity >1 ): print ' The specified correction will be skipped because bias_thresh < im_mean'
+             if (verbosity >1 ): print(' The specified correction will be skipped because bias_thresh < im_mean')
              sys.exit( ERROR_RETURN )
 
     # write mask file for c0 image region
@@ -322,7 +327,7 @@ class Wfpc2destreak:
 
         write_mask( masked_image, mask_file )
 
-        if (verbosity >=1 ): print 'Wrote mask for c0 image region to: ',mask_file
+        if (verbosity >=1 ): print('Wrote mask for c0 image region to: ',mask_file)
 
     # calculate statistics for original c0 image data
         orig_c0_data = c0_data[:,:].copy().astype(N.float32)
@@ -352,9 +357,9 @@ class Wfpc2destreak:
            bad_val =  row_data_b[ bad_pix ]
 
            if (verbosity >1 ):  # print stats of good and rejected pixels for this row
-              print '' ; print ' row = ' , i_row
+              print('') ; print(' row = ' , i_row)
               if   good_val.size > 0 :
-                 print ' good pixels: number, min, mean, max, std = ' ,  good_val.size,good_val.min(),good_val.mean(),good_val.max(),good_val.std()
+                 print(' good pixels: number, min, mean, max, std = ' ,  good_val.size,good_val.min(),good_val.mean(),good_val.max(),good_val.std())
 
            if (  len(good_val) > 0 ):
                clip_row_mean[ i_row] = good_val.mean()
@@ -388,28 +393,28 @@ class Wfpc2destreak:
         self.dcorpix = corr_c0_data.shape[0]*corr_c0_data.shape[1]
 
         if (verbosity >=1 ):
-            print 'The following means and sigmas pertain to all (uncorrected and corrected) rows:'
-            print '  the total number of uncorrected, corrected rows: ', low_row_p2,',', high_row_p2
+            print('The following means and sigmas pertain to all (uncorrected and corrected) rows:')
+            print('  the total number of uncorrected, corrected rows: ', low_row_p2,',', high_row_p2)
             if (high_row_p2 > 0 ):
-               print '  the fraction of rows corrected: ', (high_row_p2+0.0)/( high_row_p2+ low_row_p2+0.0)
-            print '  min, max of corrections are: ', to_sub_2_min,',',to_sub_2_max
-            print '  mean, std of corrections are: ',to_subtract_2.mean(),',',to_subtract_2.std()
+               print('  the fraction of rows corrected: ', (high_row_p2+0.0)/( high_row_p2+ low_row_p2+0.0))
+            print('  min, max of corrections are: ', to_sub_2_min,',',to_sub_2_max)
+            print('  mean, std of corrections are: ',to_subtract_2.mean(),',',to_subtract_2.std())
 
-            print 'The following statistics keywords are written to the corrected data output:'
-            print '  - For the unmasked pixels in the image region of the input data, the keywords and values for the '
-            print '    mean, std, min, max, and number of pixels are :'
-            print '    DMSKMEAN,    DMSKSTD,    DMSKMIN,    DMSKMAX,    DMSKPIX  '
-            print '   ', self.dmskmean,'   ', self.dmskstd,'   ', self.dmskmin,'   ', self.dmskmax,'   ', self.dmskpix
+            print('The following statistics keywords are written to the corrected data output:')
+            print('  - For the unmasked pixels in the image region of the input data, the keywords and values for the ')
+            print('    mean, std, min, max, and number of pixels are :')
+            print('    DMSKMEAN,    DMSKSTD,    DMSKMIN,    DMSKMAX,    DMSKPIX  ')
+            print('   ', self.dmskmean,'   ', self.dmskstd,'   ', self.dmskmin,'   ', self.dmskmax,'   ', self.dmskpix)
 
-            print '  - For all pixels in the image region of the original input data, the keywords and values for the '
-            print '    mean, std, min, max, and number of pixels are :'
-            print '    DORGMEAN,    DORGSTD,    DORGMIN,    DORGMAX,    DORGPIX  '
-            print '   ', self.dorgmean,'   ', self.dorgstd,'   ', self.dorgmin,'   ', self.dorgmax,'   ', self.dorgpix
+            print('  - For all pixels in the image region of the original input data, the keywords and values for the ')
+            print('    mean, std, min, max, and number of pixels are :')
+            print('    DORGMEAN,    DORGSTD,    DORGMIN,    DORGMAX,    DORGPIX  ')
+            print('   ', self.dorgmean,'   ', self.dorgstd,'   ', self.dorgmin,'   ', self.dorgmax,'   ', self.dorgpix)
 
-            print '  - For all pixels in the image region of the corrected input data, the keywords and values for the '
-            print '    mean, std, min, max, and number of pixels are :'
-            print '    DCORMEAN,    DCORSTD,    DCORMIN,    DCORMAX,    DCORPIX  '
-            print '   ', self.dcormean,'   ', self.dcorstd,'   ', self.dcormin,'   ', self.dcormax,'   ', self.dcorpix
+            print('  - For all pixels in the image region of the corrected input data, the keywords and values for the ')
+            print('    mean, std, min, max, and number of pixels are :')
+            print('    DCORMEAN,    DCORSTD,    DCORMIN,    DCORMAX,    DCORPIX  ')
+            print('   ', self.dcormean,'   ', self.dcorstd,'   ', self.dcormin,'   ', self.dcormax,'   ', self.dcorpix)
 
         outfile = file_prefix + str('_bjc_')+str(group)+str('.fits')
         update_header(self, c0_hdr) # add statistics keywords to header c0_hdr
@@ -419,18 +424,18 @@ class Wfpc2destreak:
         if (fh_c0):
            fh_c0.close()
 
-        if (verbosity >=1 ): print 'DONE '
+        if (verbosity >=1 ): print('DONE ')
 
     def print_pars(self):
         """ Print parameters method.
         """
-        print 'The values of the input parameters are :'
-        print '  input c0 file:  ' , self.input_file
-        print '  input mask file:  ' , self.input_mask
-        print '  group:  ' , self.group
-        print '  bias_thresh:  ' , self.bias_thresh
-        print '  row thresh:  ' , self.row_thresh
-        print '  number of CR rejection iterations:  ' , self.niter
+        print('The values of the input parameters are :')
+        print('  input c0 file:  ' , self.input_file)
+        print('  input mask file:  ' , self.input_mask)
+        print('  group:  ' , self.group)
+        print('  bias_thresh:  ' , self.bias_thresh)
+        print('  row thresh:  ' , self.row_thresh)
+        print('  number of CR rejection iterations:  ' , self.niter)
 
 
 def check_py_pars(input_file, group, bias_thresh, row_thresh, input_mask, niter):
@@ -461,45 +466,45 @@ def check_py_pars(input_file, group, bias_thresh, row_thresh, input_mask, niter)
 
        if (group == None):
             group = wfpc2util.group
-            print ' You have not been specified a value for group; the default is:',  wfpc2util.group
-            print ' If you want to use the default, hit <enter>, otherwise type in the desired value'
-            inp = raw_input('? ')
+            print(' You have not been specified a value for group; the default is:',  wfpc2util.group)
+            print(' If you want to use the default, hit <enter>, otherwise type in the desired value')
+            inp = input('? ')
             if inp == '':
-               print ' The default value of ', group,' will be used'
+               print(' The default value of ', group,' will be used')
             else:
                try:
                    group = string.atoi(inp)
                except:
-                   print ' The value entered (',inp,') is invalid so the default will be used'
+                   print(' The value entered (',inp,') is invalid so the default will be used')
 
        if (bias_thresh == None):
             bias_thresh = wfpc2util.bias_thresh
-            print ' You have not specified a value for bias_thresh; the default is:',  wfpc2util.bias_thresh
-            print ' If you want to use the default, hit <enter>, otherwise type in the desired value'
-            inp = raw_input('? ')
+            print(' You have not specified a value for bias_thresh; the default is:',  wfpc2util.bias_thresh)
+            print(' If you want to use the default, hit <enter>, otherwise type in the desired value')
+            inp = input('? ')
             if inp == '':
-               print ' The default value of ', bias_thresh,' will be used'
+               print(' The default value of ', bias_thresh,' will be used')
             else:
                try:
                    bias_thresh = string.atof(inp)
                except:
-                   print ' The value entered (',inp,') is invalid so the default will be used'
+                   print(' The value entered (',inp,') is invalid so the default will be used')
 
        if (row_thresh == None):
             row_thresh = wfpc2util.row_thresh
-            print ' You have not specified a value for row_thresh; the default is:',  wfpc2util.row_thresh
-            print ' If you want to use the default, hit <enter>, otherwise type in the desired value'
-            inp = raw_input('? ')
+            print(' You have not specified a value for row_thresh; the default is:',  wfpc2util.row_thresh)
+            print(' If you want to use the default, hit <enter>, otherwise type in the desired value')
+            inp = input('? ')
             if inp == '':
-               print ' The default value of ', row_thresh,' will be used'
+               print(' The default value of ', row_thresh,' will be used')
             else:
                try:
                    row_thresh = string.atof(inp)
                except:
-                   print ' The value entered (',inp,') is invalid so the default will be used'
+                   print(' The value entered (',inp,') is invalid so the default will be used')
 
 
-       if (input_mask <> None):
+       if (input_mask != None):
             try:
                fh_mask = pyfits.open(input_mask)
             except:
@@ -508,16 +513,16 @@ def check_py_pars(input_file, group, bias_thresh, row_thresh, input_mask, niter)
 
        if (niter == None):
             niter = wfpc2util.niter
-            print ' You have not specified a value for niter; the default is:',  wfpc2util.niter
-            print ' If you want to use the default, hit <enter>, otherwise type in the desired value'
-            inp = raw_input('? ')
+            print(' You have not specified a value for niter; the default is:',  wfpc2util.niter)
+            print(' If you want to use the default, hit <enter>, otherwise type in the desired value')
+            inp = input('? ')
             if inp == '':
-               print ' The default value of ', niter,' will be used'
+               print(' The default value of ', niter,' will be used')
             else:
                try:
                    niter = string.atoi(inp)
                except:
-                   print ' The value entered (',inp,') is invalid so the default will be used'
+                   print(' The value entered (',inp,') is invalid so the default will be used')
 
 
        return group, bias_thresh, row_thresh, niter
@@ -554,22 +559,22 @@ def check_cl_pars(input_file, group,  bias_thresh, row_thresh, input_mask, niter
            if (type( group ) == str):
               group = string.atoi(group)
        except:
-           print ' The group value entered (',group,') is invalid. Try again'
+           print(' The group value entered (',group,') is invalid. Try again')
            sys.exit( ERROR_RETURN)
 
        try:
            bias_thresh = string.atof(bias_thresh)
        except:
-           print ' The bias threshold value entered (',bias_thresh,') is invalid.'
+           print(' The bias threshold value entered (',bias_thresh,') is invalid.')
            sys.exit( ERROR_RETURN)
 
        try:
            row_thresh = string.atof(row_thresh)
        except:
-           print ' The row threshold value entered (',row_thresh,') is invalid. Try again.'
+           print(' The row threshold value entered (',row_thresh,') is invalid. Try again.')
            sys.exit( ERROR_RETURN)
 
-       if (input_mask <> None):
+       if (input_mask != None):
             try:
                fh_mask = pyfits.open(input_mask)
             except:
@@ -582,7 +587,7 @@ def check_cl_pars(input_file, group,  bias_thresh, row_thresh, input_mask, niter
            pass
 
        if ((niter < 0 ) or (niter > 10 )):
-           print ' The number of CR rejection iterations entered (',niter,') is invalid. Try again.'
+           print(' The number of CR rejection iterations entered (',niter,') is invalid. Try again.')
            sys.exit( ERROR_RETURN)
 
 
@@ -805,7 +810,7 @@ def fitline( x, y, mask):
         num = ndimage.sum( temp1, labels=labels)
         denom = ndimage.sum( temp2, labels=labels)
         if denom == 0.:
-            raise ValueError, "Error fitting a line to subarray."
+            raise ValueError("Error fitting a line to subarray.")
         slope = num / denom
 
         intercept = mean_y - slope * mean_x
@@ -898,7 +903,7 @@ def write_to_file(data, filename, hdr, verbosity, im_mean, im_sigma):
     fimg.append(fimghdu)
     fimg.writeto(filename)
 
-    if (verbosity >=1 ): print 'Wrote updated data to: ',filename
+    if (verbosity >=1 ): print('Wrote updated data to: ',filename)
 
 
 if __name__ =="__main__":
@@ -970,12 +975,12 @@ if __name__ =="__main__":
                                 row_thresh=row_thresh, niter=niter)
 
        if (verbosity >=1 ):
-            print 'The version of this routine is: ',__version__
+            print('The version of this routine is: ',__version__)
             wfpc2_d.print_pars()
        Wfpc2destreak.destreak(wfpc2_d)
 
        del wfpc2_d
 
-    except Exception, errmess:
+    except Exception as errmess:
        opusutil.PrintMsg("F","FATAL ERROR "+ str(errmess))
        sys.exit( ERROR_RETURN)

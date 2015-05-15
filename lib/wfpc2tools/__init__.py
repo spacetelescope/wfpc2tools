@@ -12,6 +12,8 @@ module.
 
 
 """
-import wfpc2cte
-import wfpc2destreak
+from __future__ import absolute_import
+
+from . import wfpc2cte
+from . import wfpc2destreak
 from .version import *
