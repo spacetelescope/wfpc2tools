@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from __future__ import division # confidence high
+from __future__ import division, print_function # confidence high
 import sys
 import time
 
@@ -16,13 +16,13 @@ verbosity = VERBOSE
 def all_printMsg( message, level=VERBOSE):
 
     if verbosity >= level:     
-      print message
+      print(message)
       sys.stdout.flush()
 
 def printMsg( message, level=QUIET):
 
     if verbosity >= level:
-        print message
+        print(message)
         sys.stdout.flush()
 
 def setVerbosity( verbosity_level):

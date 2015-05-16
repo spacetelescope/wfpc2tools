@@ -62,7 +62,7 @@ computations of the effect of CTE based on the algorithm published by Dolphin
 :FUNCTIONS:
 
 """
-from __future__ import division # confidence medium
+from __future__ import division, print_function # confidence high
 
 import numpy as np
 import pyfits
@@ -132,9 +132,9 @@ def update_CTE_keywords(hdr, cte,quiet=False,update=True):
     # If not, print a warning and insure quiet=False so the results get
     # reported to STDOUT at the very least.
     if 'CTE_1E2' not in hdr:
-        print "WARNING: CTE keywords not found in %s,%d header."%(hdr['extname'],hdr['extver'])
-        print "         Adding the keywords exclusively to "
-        print "         the FITS file's extension header."
+        print("WARNING: CTE keywords not found in %s,%d header."%(hdr['extname'],hdr['extver']))
+        print("         Adding the keywords exclusively to ")
+        print("         the FITS file's extension header.")
         quiet = False
 
     if update:
@@ -143,9 +143,9 @@ def update_CTE_keywords(hdr, cte,quiet=False,update=True):
         hdr.update('CTE_1E4',cte[2],after='CTE_1E3')
 
     if not quiet:
-        print 'CTE_1E2   = ',cte[0]
-        print 'CTE_1E3  = ',cte[1]
-        print 'CTE_1E4 = ',cte[2]
+        print('CTE_1E2   = ',cte[0])
+        print('CTE_1E3  = ',cte[1])
+        print('CTE_1E4 = ',cte[2])
 
 def compute_CTE(filename,quiet=True,nclip=3,update=True):
     """
@@ -183,9 +183,9 @@ def compute_CTE(filename,quiet=True,nclip=3,update=True):
     fimg.info()
     if isinstance(fimg[1],pyfits.TableHDU):
         fimg.close()
-        print 'Input image is in the unsupported "waivered" FITS format. '
-        print '   Please convert to GEIS or multi-extension FITS format.'
-        print 'Exiting...'
+        print('Input image is in the unsupported "waivered" FITS format. ')
+        print('   Please convert to GEIS or multi-extension FITS format.')
+        print('Exiting...')
         return
 
     obs_date = fimg[0].header['expstart']
@@ -201,7 +201,7 @@ def compute_CTE(filename,quiet=True,nclip=3,update=True):
             xcte = compute_XCTE(chip_values['center'][1],chip_values['bg'])
             ycte = compute_YCTE(chip_values, obs_mjd,xcte)
             if not quiet:
-                print 'Background computed to be: ',chip_values['bg_raw']
+                print('Background computed to be: ',chip_values['bg_raw'])
 
             # Based on Workshop 2002 paper, after equation 8...
             total_cte = xcte + ycte
@@ -209,7 +209,7 @@ def compute_CTE(filename,quiet=True,nclip=3,update=True):
             update_CTE_keywords(extn.header, total_cte,quiet=quiet,update=update)
 
     if not quiet and update:
-        print 'Updating keywords in: ',newname
+        print('Updating keywords in: ',newname)
 
     fimg.flush()
 
@@ -220,4 +220,4 @@ def run(filename,quiet=True,nclip=3):
     compute_CTE(filename,quiet=quiet,nclip=nclip)
 
 def help():
-    print __doc__
+    print(__doc__)

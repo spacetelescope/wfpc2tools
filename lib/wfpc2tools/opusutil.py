@@ -7,7 +7,7 @@
 # 01/20/05  52348  Sherbert Remove "MSG_DEGUG" to obviate its use
 # 12/15/05  54226  Sontag   Added UsingLvl() and __all_valid_levels
 #---------------------------------------------------------------------------
-from __future__ import division # confidence high
+from __future__ import division, print_function # confidence high
 import os
 import sys
 import string
@@ -144,7 +144,7 @@ def PrintMsg (level, msg, module_name=""):
       module_name = module_name + '-'
 
     # write to stdout and the trailer, if opened
-    print current_time+'-'+level+'-'+leveltxt+'-'+module_name+msg
+    print(current_time+'-'+level+'-'+leveltxt+'-'+module_name+msg)
     if _trl_fd:
       try:
         _trl_fd.write(current_time+'-'+level+'-'+leveltxt+'-'+module_name+msg+'\n')
@@ -270,7 +270,7 @@ def ResourceToMap (filename):
 if __name__ == "__main__":
   fname="TestTrailer.tst"
   OpenTrl(fname)
-  print "################################"
+  print("################################")
   PrintMsg("F","test msg  1")
   PrintMsg("F","test msg  2",__name__)
   PrintMsg("E","test msg  3")
@@ -282,13 +282,13 @@ if __name__ == "__main__":
   PrintMsg("D","test msg  9")
   PrintMsg("D","test msg 10",__name__)
   CloseTrl()
-  print "================================"
-  print "now here is the trailer content:"
-  print "==========Beg trl==============="
+  print("================================")
+  print("now here is the trailer content:")
+  print("==========Beg trl===============")
   for line in open(fname, 'r').readlines():
-    print line,
-  print "==========End trl==============="
+    print(line, end=' ')
+  print("==========End trl===============")
   aList = FileToList(fname)
-  print "after reading to a list:"+str(aList)
+  print("after reading to a list:"+str(aList))
   RemoveIfThere(fname)
-  print "stretching OPUS_DEFINITIONS_DIR:null.path = "+StretchFile ("OPUS_DEFINITIONS_DIR:null.path")
+  print("stretching OPUS_DEFINITIONS_DIR:null.path = "+StretchFile ("OPUS_DEFINITIONS_DIR:null.path"))
