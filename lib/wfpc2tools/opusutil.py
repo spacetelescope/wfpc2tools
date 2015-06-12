@@ -10,7 +10,6 @@
 from __future__ import division, print_function # confidence high
 import os
 import sys
-import string
 import time
 
 # Read the environment setting for the PrintMsg report level
@@ -248,17 +247,17 @@ def ResourceToMap (filename):
   for line in open(filename, 'r').readlines():
     # trim comment (find ! and remove from there until EOS)
     # and if line now empty, read next line
-    theLine = string.split(line,'!')
+    theLine = line.split('!')
     if len(theLine[0]) == 0:
       continue
     # work with theLine[0] now
     # parse "keyword = value" into a map entry by splitting on =
     # then trimming leading/trailing blanks and newline from parts
-    parts = string.split(theLine[0],"=")
+    parts = theLine[0].split("=")
     if len(parts) > 1:
       # non-blank line, use it
-      key = string.strip(parts[0])
-      value = string.strip(parts[1])
+      key = parts[0].strip()
+      value = parts[1].strip()
       theMap[key] = value
   #
   return theMap
