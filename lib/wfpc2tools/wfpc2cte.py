@@ -65,7 +65,7 @@ computations of the effect of CTE based on the algorithm published by Dolphin
 from __future__ import division, print_function # confidence high
 
 import numpy as np
-import pyfits
+from astropy.io import fits as pyfits
 import stsci.tools
 from stsci.tools import readgeis, fileutil
 import stsci.imagestats as imagestats
