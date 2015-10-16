@@ -175,7 +175,7 @@ or ::
 from __future__ import absolute_import, division, print_function # confidence medium
 
 import sys, string
-import pyfits
+from astropy.io import fits as pyfits
 import numpy as N
 from optparse import OptionParser
 
