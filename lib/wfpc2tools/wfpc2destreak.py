@@ -171,6 +171,7 @@ or ::
 #          07/23/08 - put bias_thresh back in as a settable parameter; set default row_thresh = 0.1
 #          09/25/08 - added check for __name__
 #          03/12/10 - added support for geis, waiver fits, and multi-extension fits input
+#          02/24/16 - Use SciPy
 
 from __future__ import absolute_import, division, print_function # confidence medium
 
@@ -181,13 +182,12 @@ from optparse import OptionParser
 
 import stsci.tools
 from stsci.tools import fileutil
-from stsci.convolve import boxcar
-import stsci.ndimage as ndimage
+from scipy import ndimage
 
 from . import wfpc2util
 from . import opusutil
 
-__version__ = "2.2 (2010 March 12)"
+__version__ = "2.3 (2016 Feb 24)"
 
 NUM_SIG = 2.5  # number of sigma to use in sigma clipping
 TOT_ITER = 4   # maximum number of iterations for sigma clipping
