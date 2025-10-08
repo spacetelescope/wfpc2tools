@@ -28,7 +28,6 @@ setup(
     },
     packages=find_packages(),
     author='Warren Hack, Nadezhda Dencheva, David Grumm',
-    author_email='help@stsci.edu',
     description='Tools for use with WFPC2 (Wide Field and Planetary Camera 2)',
     url='https://github.com/spacetelescope/wfpc2tools',
     classifiers = [
