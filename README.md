@@ -1,5 +1,3 @@
 # wfpc2tools
 
-[![Build Status](https://dev.azure.com/spacetelescope/wfpc2tools/_apis/build/status/spacetelescope.wfpc2tools?branchName=master)](https://dev.azure.com/spacetelescope/wfpc2tools/_build/latest?definitionId=14&branchName=master)
-[![codecov](https://codecov.io/gh/spacetelescope/wfpc2tools/branch/master/graph/badge.svg)](https://codecov.io/gh/spacetelescope/wfpc2tools)
-
+Tools for WFPC2 instrument on HST. This instrument is no longer operational since HST SM4 in 2009.
