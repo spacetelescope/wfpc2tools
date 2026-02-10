@@ -1,6 +1,54 @@
+[project]
+name = "wfpc2tools"
+description = "Tools for use with WFPC2 (Wide Field and Planetary Camera 2)"
+authors = [
+    { name = "Warren Hack" },
+    { name = "Nadezhda Dencheva" },
+    { name = "David Grumm" },
+]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "astropy>=0.3.1",
+    "numpy>=1.5.1",
+    "scipy>=0.14",
+    "stsci.imagestats",
+    "stsci.tools",
+]
+dynamic = [
+    "version",
+]
+license = "BSD-3-Clause"
+license-files = [
+    "LICENSE.txt"
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "codecov",
+]
+
 [build-system]
 requires = [
     "setuptools>=30.3.0",
     "setuptools_scm",
     "wheel",
 ]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools_scm]
+version_file = "src/wfpc2tools/_version.py"
+
